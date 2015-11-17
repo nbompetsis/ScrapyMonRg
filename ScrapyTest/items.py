@@ -10,12 +10,8 @@ import scrapy
 
 class ScrapytestItem(scrapy.Item):
     # define the fields for your item here like:
-    #constants
+    # Constants of the class
     SWITCHES="switches"
     ROUTERS="routers"
 
-    results ={}
-    
-    #switches = scrapy.Field()
-    #routers = scrapy.Field()
-    
+   
