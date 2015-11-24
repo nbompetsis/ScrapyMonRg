@@ -8,9 +8,10 @@ import os
 
 class MySpider(scrapy.Spider):
         name = "myspider"
-        item = {}
-        item2 = {}
-        item3 = {}
+        first_layer = {}
+        second_layer = {}
+        third_layer = {}
+        forth_layer = {}
         resultsFolder ="./results" 
         allowed_domains = ["mon.grnet.gr"]
         domain = 'https://mon.grnet.gr'
@@ -20,14 +21,14 @@ class MySpider(scrapy.Spider):
             self.makedirResults()
             jsonresponse = json.loads(response.body_as_unicode())
 
-            MySpider.item[ScrapytestItem.SWITCHES] = jsonresponse[ScrapytestItem.SWITCHES]
-            MySpider.item[ScrapytestItem.ROUTERS] = jsonresponse[ScrapytestItem.ROUTERS]
+            self.first_layer[ScrapytestItem.SWITCHES] = jsonresponse[ScrapytestItem.SWITCHES]
+            self.first_layer[ScrapytestItem.ROUTERS] = jsonresponse[ScrapytestItem.ROUTERS]
             
             #self.createFile('layer1',self.item)
             
-            for itemsValue in MySpider.item:
-                itemLink =  self.domain + MySpider.item[itemsValue]
-                yield Request(itemLink,callback=lambda r:self.parseLayer2(r, itemsValue))
+            for items_first in self.first_layer:
+                link_first =  self.domain + self.first_layer[items_first]
+                yield Request(link_first,callback=lambda r:self.parseLayer2(r, items_first))
                 
             return
             
@@ -35,15 +36,14 @@ class MySpider(scrapy.Spider):
 
         def parseLayer2(self,response,parent):
             
-            jsonresponse = json.loads(response.body_as_unicode())
+            self.second_layer = json.loads(response.body_as_unicode())
             #self.createFile(parent + 'layer2',jsonresponse)
-            self.item2 = jsonresponse
 
-            for item in self.item2:
-                print item
+            for items_second in self.second_layer:
+                #print item
                 #print jsonresponse[jsonItem]
-                link3 = self.domain + self.item2[item]
-                yield Request(link3,callback=lambda r:self.parseLayer3(r, item))
+                link_second = self.domain + self.second_layer[items_second]
+                yield Request(link_second,callback=lambda r:self.parseLayer3(r, items_second))
             return
 
         def parseLayer3(self,response,parent):
