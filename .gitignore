@@ -25,6 +25,9 @@ var/
 *.egg
 #mine
 results/
+*.pyc
+*.cfg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

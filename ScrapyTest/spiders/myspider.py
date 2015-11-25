@@ -28,14 +28,18 @@ class MySpider(scrapy.Spider):
             
             for items_first in self.first_layer:
                 link_first =  self.domain + self.first_layer[items_first]
-                yield Request(link_first,callback=lambda r:self.parseLayer2(r, items_first))
-                
+                #print self.first_layer
+                request = Request(link_first,callback=self.parseLayer2)
+                request.meta['parent'] = items_first
+                yield request
+            
             return
             
 
 
-        def parseLayer2(self,response,parent):
-            
+        def parseLayer2(self,response):
+
+            parent = response.meta['parent']
             self.second_layer = json.loads(response.body_as_unicode())
             #self.createFile(parent + 'layer2',jsonresponse)
 
@@ -43,14 +47,21 @@ class MySpider(scrapy.Spider):
                 #print item
                 #print jsonresponse[jsonItem]
                 link_second = self.domain + self.second_layer[items_second]
-                yield Request(link_second,callback=lambda r:self.parseLayer3(r, items_second))
+                request = Request(link_second,callback=self.parseLayer3)
+                request.meta['parent'] = items_second
+                yield request
+
             return
 
-        def parseLayer3(self,response,parent):
+        def parseLayer3(self,response):
 
-            jsonresponse = json.loads(response.body_as_unicode())
-            print parent 
-            self.createFile(parent + 'layer3',jsonresponse)
+            parent = response.meta['parent'] 
+            self.third_layer = json.loads(response.body_as_unicode())
+            print('############################################################',parent)
+            print self.third_layer            
+            print '############################################################'
+            
+            self.createFile(parent,self.third_layer)
 
             return
 
