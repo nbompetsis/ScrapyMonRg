@@ -1,6 +1,7 @@
 from ScrapyTest.items import ScrapytestItem
 from urlparse import urlparse
 from scrapy.http.request import Request
+from ScrapyTest.items import RgItem
 import scrapy
 import json 
 import os
@@ -8,9 +9,9 @@ import os
 
 class MySpider(scrapy.Spider):
         name = "myspider"
-        first_layer = {}
-        second_layer = {}
-        third_layer = {}
+        nodes = {}
+        domains = {}
+        statements = {}
         forth_layer = {}
         resultsFolder ="./results" 
         allowed_domains = ["mon.grnet.gr"]
@@ -19,50 +20,51 @@ class MySpider(scrapy.Spider):
          
         def parse(self, response):
             self.makedirResults()
-            jsonresponse = json.loads(response.body_as_unicode())
+            self.nodes = json.loads(response.body_as_unicode())
 
-            self.first_layer[ScrapytestItem.SWITCHES] = jsonresponse[ScrapytestItem.SWITCHES]
-            self.first_layer[ScrapytestItem.ROUTERS] = jsonresponse[ScrapytestItem.ROUTERS]
-            
             #self.createFile('layer1',self.item)
-            
-            for items_first in self.first_layer:
-                link_first =  self.domain + self.first_layer[items_first]
-                #print self.first_layer
-                request = Request(link_first,callback=self.parseLayer2)
-                request.meta['parent'] = items_first
+            #rgItem = RgItem()
+            for node in self.nodes:
+                #rgItem = RgItem()
+                #rgItem['node'] = node
+                link_node = self.domain + self.nodes[node]
+                request = Request(link_node,callback=self.parseDomain)
+                #request.meta['node'] = items_first
+                request.meta['node'] = node
                 yield request
             
             return
             
 
 
-        def parseLayer2(self,response):
+        def parseDomain(self,response):
 
-            parent = response.meta['parent']
-            self.second_layer = json.loads(response.body_as_unicode())
+            node = response.meta['node']
+            self.domains = json.loads(response.body_as_unicode())
             #self.createFile(parent + 'layer2',jsonresponse)
+            #print('Layer1############################################################',rgResponse['node'])
 
-            for items_second in self.second_layer:
+            for dom in self.domains:
                 #print item
-                #print jsonresponse[jsonItem]
-                link_second = self.domain + self.second_layer[items_second]
-                request = Request(link_second,callback=self.parseLayer3)
-                request.meta['parent'] = items_second
+                #print jsonresponse[jsonItem
+                link_dom = self.domain + self.domains[dom]
+                request = Request(link_dom,callback=self.parseStatements)
+                request.meta['node'] = node
+                request.meta['domain'] = dom
                 yield request
 
             return
 
-        def parseLayer3(self,response):
+        def parseStatements(self,response):
 
-            parent = response.meta['parent'] 
-            self.third_layer = json.loads(response.body_as_unicode())
-            print('############################################################',parent)
-            print self.third_layer            
-            print '############################################################'
+            node = response.meta['node']
+            dom = response.meta['domain']
+
+            statements = json.loads(response.body_as_unicode())
+            #self.createFile(parent,self.third_layer)
             
-            self.createFile(parent,self.third_layer)
 
+            
             return
 
 
