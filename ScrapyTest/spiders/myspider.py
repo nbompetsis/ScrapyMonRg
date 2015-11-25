@@ -60,10 +60,14 @@ class MySpider(scrapy.Spider):
             node = response.meta['node']
             dom = response.meta['domain']
 
-            statements = json.loads(response.body_as_unicode())
+            self.statements = json.loads(response.body_as_unicode())
             #self.createFile(parent,self.third_layer)
-            
-
+            for statement in self.statements:
+                print 'Statementssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+                print node
+                print dom
+                print statement
+                print self.statements[statement]
             
             return
 
