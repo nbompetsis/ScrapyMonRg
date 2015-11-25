@@ -13,5 +13,21 @@ class ScrapytestItem(scrapy.Item):
     # Constants of the class
     SWITCHES="switches"
     ROUTERS="routers"
+    
 
-   
+class RgItem(scrapy.Item):
+    node = scrapy.Field()
+    name = scrapy.Field()
+    discards = scrapy.Field()
+    errors = scrapy.Field()
+    broadcastpackets = scrapy.Field()
+    multicastpackets = scrapy.Field()
+    packetloss = scrapy.Field()
+    mem = scrapy.Field()
+    packets = scrapy.Field()
+    rtt = scrapy.Field()
+    traffic = scrapy.Field()
+    aggregate = scrapy.Field()
+    cpu = scrapy.Field()
+
+
