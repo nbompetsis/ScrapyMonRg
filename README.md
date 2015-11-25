@@ -1,8 +1,6 @@
 # ScrapyMonRg
 Parsing JSON html pages of 
-                  https://mon.grnet.gr/api/
-                  
-with SCRAPY Library
+                  https://mon.grnet.gr/api/  with scrapy Library
 
 
 Four Layers-pages of data!!!!
