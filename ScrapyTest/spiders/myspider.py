@@ -63,14 +63,33 @@ class MySpider(scrapy.Spider):
             self.statements = json.loads(response.body_as_unicode())
             #self.createFile(parent,self.third_layer)
             for statement in self.statements:
-                print 'Statementssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
-                print node
-                print dom
-                print statement
-                print self.statements[statement]
-            
+                link_state = self.domain + self.statements[statement]
+                request = Request(link_state,callback=self.parseNativeObjects)
+                request.meta['node'] = node
+                request.meta['domain'] = dom
+                request.meta['statement'] = statement
+                yield request
+
             return
 
+        
+        def parseNativeObjects(self,response):
+
+
+            node = response.meta['node']
+            dom = response.meta['domain']
+            statement = response.meta['statement']
+            nativeObjects = {}
+
+            nativeObjects = json.loads(response.body_as_unicode())
+            print '####################################################'
+            print node
+            print dom
+            print statement
+            self.createFile(node + '_' + dom + '_' + statement,nativeObjects)
+            print '1111111111111111111111111111111111111111111111111111111111111111111111111'
+
+            return
 
 
         def createFile(self,namefile,results):
