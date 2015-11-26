@@ -6,6 +6,8 @@ Parsing JSON html pages of
 Four Layers-pages of data!!!!
 
 
+Total 24665 Native Objects
+
 
 Requirements 
 Python 2.7
