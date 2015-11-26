@@ -73,13 +73,14 @@ class MySpider(scrapy.Spider):
             native_objects = json.loads(response.body_as_unicode())
             for nat_object in native_objects:
 
-                native_objects[nat_object]["metadata"].append({"extraInfos":{"node":node, "domain":dom, "categoty": statement}})
+                native_objects[nat_object]['metadata']['upper_layer_infos'] = {"node":node, "domain":dom, "category": statement}
                 final_object = {}
                 final_object[nat_object] = native_objects[nat_object]
-                json_final_object = json.dumps(final_object)
+                #json_final_object = json.dumps(final_object)
 
                 print '##########################################################################################'
-                self.createFile(node + '_' + dom + '_' + statement + '_' + nat_object,json_final_object)
+                self.createFile(node + '_' + dom + '_' + statement + '_' + nat_object,final_object)
+                print final_object
                 print '##########################################################################################'
 
             return

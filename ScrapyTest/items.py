@@ -15,19 +15,9 @@ class ScrapytestItem(scrapy.Item):
     ROUTERS="routers"
     
 
-class RgItem(scrapy.Item):
-    node = scrapy.Field()
-    name = scrapy.Field()
-    discards = scrapy.Field()
-    errors = scrapy.Field()
-    broadcastpackets = scrapy.Field()
-    multicastpackets = scrapy.Field()
-    packetloss = scrapy.Field()
-    mem = scrapy.Field()
-    packets = scrapy.Field()
-    rtt = scrapy.Field()
-    traffic = scrapy.Field()
-    aggregate = scrapy.Field()
-    cpu = scrapy.Field()
+class NativeObjectItem(scrapy.Item):
+    native_id = scrapy.Field()
+    uri = scrapy.Field()
+    metadata = scrapy.Field()
 
 
