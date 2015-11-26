@@ -6,7 +6,7 @@ Parsing JSON html pages of
 Four Layers-pages of data!!!!
 
 
-Total 24665 Native Objects
+Total 24000+ Native Objects
 
 
 Requirements 
