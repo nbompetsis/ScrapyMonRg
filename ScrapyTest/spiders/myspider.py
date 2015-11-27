@@ -17,18 +17,18 @@ class MySpider(scrapy.Spider):
         domain = 'https://mon.grnet.gr'
         start_urls = ["https://mon.grnet.gr/api/rg/"]
         beanstalk = ''
-        host_beanstalkd = '195.134.71.194'
+        #host_beanstalkd = '195.134.71.194'
          
         def parse(self, response):
 
             # Connect to Beanstalkd server
-            self.beanstalk = beanstalkc.Connection(host=self.host_beanstalkd, port=11301)
+            #self.beanstalk = beanstalkc.Connection(host=self.host_beanstalkd, port=11301)
             
             # See all tubes:
-            self.beanstalk.tubes()
+            #self.beanstalk.tubes()
 
             # Switch to the default (tube):
-            self.beanstalk.use('default')
+            #self.beanstalk.use('default')
 
 
             self.makedirResults()
@@ -94,7 +94,7 @@ class MySpider(scrapy.Spider):
 
                 print '##########################################################################################'
                 self.createFile(node + '_' + dom + '_' + statement + '_' + nat_object,final_object)
-                self.beanstalk.put(json_final_object)
+                #self.beanstalk.put(json_final_object)
                 print json_final_object
                 print '##########################################################################################'
 
