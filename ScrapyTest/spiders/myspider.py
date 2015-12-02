@@ -16,12 +16,8 @@ class MySpider(scrapy.Spider):
         allowed_domains = ["mon.grnet.gr"]
         domain = 'https://mon.grnet.gr'
         start_urls = ["https://mon.grnet.gr/api/rg/"]
-        beanstalk = ''
+        beanstalk = '' #beanstalkc.Connection(host='127.0.0.1', port=11301)
         host_beanstalkd = '127.0.0.1'
-
-        def __init__(self):
-            dispatcher.connect(self.spider_closed, signals.spider_closed)
-
 
         def parse(self, response):
 
@@ -105,8 +101,10 @@ class MySpider(scrapy.Spider):
 
             return
 
-        def spider_closed(self,spider):
-            self.beanstalk.put('quit')
+        def spider_closed(self,reason):
+            if reason == 'finished':
+                print 'QUITTTTTTTTTTTTTTT'
+                self.beanstalk.put('quit')
 
 
         def createFile(self,namefile,results):
