@@ -108,9 +108,9 @@ class MySpider(scrapy.Spider):
 
 
         def spider_closed(self,reason):
+            self.beanstalk.put('quit')
             if reason == 'finished':
                 print 'quit'
-                self.beanstalk.put('quit')
             elif reason == 'shutdown':
                 print 'control C pressed'
             elif reason == 'cancelled':
