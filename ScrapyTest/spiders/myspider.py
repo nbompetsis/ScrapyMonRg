@@ -6,6 +6,9 @@ import scrapy
 import json 
 import os
 import beanstalkc
+import time
+import datetime
+
 
 class MySpider(scrapy.Spider):
         name = "myspider"
@@ -20,10 +23,11 @@ class MySpider(scrapy.Spider):
         beanstalk = '' 
         host_beanstalkd = '127.0.0.1'
 
-
+        # init the handler for closing the spider
         def __init__(self):
             dispatcher.connect(self.spider_closed, signals.spider_closed)
 
+        # First parse wave
         def parse(self, response):
 
             # Connect to Beanstalkd server
@@ -36,19 +40,20 @@ class MySpider(scrapy.Spider):
             self.beanstalk.use('default')
 
 
-            self.makedirResults()
+            #self.makedirResults()
             self.nodes = json.loads(response.body_as_unicode())
 
             for node in self.nodes:
                 link_node = self.domain + self.nodes[node]
                 request = Request(link_node,callback=self.parseDomain)
+                # Pass metadata to the next wave of parsing 
                 request.meta['node'] = node
                 yield request
 
             return
             
 
-
+        # Second parse wave (Domains)
         def parseDomain(self,response):
 
             node = response.meta['node']
@@ -57,12 +62,14 @@ class MySpider(scrapy.Spider):
             for dom in self.domains:
                 link_dom = self.domain + self.domains[dom]
                 request = Request(link_dom,callback=self.parseStatements)
+                # Pass metadata to the next wave of parsing 
                 request.meta['node'] = node
                 request.meta['domain'] = dom
                 yield request
 
             return
 
+        # Third parse wave (Category)
         def parseStatements(self,response):
 
             node = response.meta['node']
@@ -72,6 +79,7 @@ class MySpider(scrapy.Spider):
             for statement in self.statements:
                 link_state = self.domain + self.statements[statement]
                 request = Request(link_state,callback=self.parseNativeObjects)
+                # Pass metadata to the next wave of parsing 
                 request.meta['node'] = node
                 request.meta['domain'] = dom
                 request.meta['statement'] = statement
@@ -79,7 +87,7 @@ class MySpider(scrapy.Spider):
 
             return
 
-        
+        # Fourth parse wave (Native Objects) 
         def parseNativeObjects(self,response):
             
             node = response.meta['node']
@@ -88,18 +96,24 @@ class MySpider(scrapy.Spider):
             native_objects = {}
 
             native_objects = json.loads(response.body_as_unicode())
+            # Change the structure of the native object
             for nat_object in native_objects:
 
                 native_objects[nat_object]['metadata']['upper_node_info'] = {"name":"node", "value":node}
                 native_objects[nat_object]['metadata']['upper_domain_info'] = {"name":"domain", "value":dom}
                 native_objects[nat_object]['metadata']['upper_category_info'] = {"name":"category", "value":statement}
                 native_objects[nat_object]['metadata']['backend'] = {"name":"backend", "value":"mon"}
+                # Set up timestamp
+                current_t = time.time()
+                current_date = datetime.datetime.fromtimestamp(current_t).strftime('%Y-%m-%d %H:%M:%S')
+                native_objects[nat_object]['modified_timestamp'] = current_date
+                native_objects[nat_object]['created_timestamp'] = current_date
                 final_object = {}
                 final_object[nat_object] = native_objects[nat_object]
                 json_final_object = json.dumps(final_object)
 
-                print '##########################################################################################'
-                self.createFile(node + '_' + dom + '_' + statement + '_' + nat_object,final_object)
+                print '############################################ {} ###################################'.format(nat_object)
+                #self.createFile(node + '_' + dom + '_' + statement + '_' + nat_object,final_object)
                 self.beanstalk.put(json_final_object)
                 print json_final_object
                 print '##########################################################################################'
