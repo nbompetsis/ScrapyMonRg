@@ -33,9 +33,9 @@ Documentation
 http://beanstalkc.readthedocs.org/en/latest/tutorial.html#tube-management
 
 Run ScrapyMonRg project
-git clone git@github.com:nbompetsis/ScrapyMonRg.git
-cd <ScrapyTesting>
-scrapy crawl myspider
+  1) git clone git@github.com:nbompetsis/ScrapyMonRg.git
+  2) cd <ScrapyTesting>
+  3) scrapy crawl myspider
 
 
 
